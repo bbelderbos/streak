@@ -1,6 +1,6 @@
 import calendar
 from collections import Counter
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 from pathlib import Path
 
@@ -52,18 +52,22 @@ def _filter_dates_for_month(dates: Counter, year: int, month: int) -> set:
     return {date for date in dates if date.year == year and date.month == month}
 
 
-def current_streak(dates: Counter, year: int, month: int) -> int:
-    filtered_dates = _filter_dates_for_month(dates, year, month)
-    if not filtered_dates:
+def longest_streak(dates: Counter, year: int, month: int) -> int:
+    filtered = sorted(_filter_dates_for_month(dates, year, month))
+    if not filtered:
         return 0
 
-    latest = max(filtered_dates)
-    streak = 0
-    day = latest
-    while day in filtered_dates:
-        streak += 1
-        day -= timedelta(days=1)
-    return streak
+    max_streak = 1
+    current_streak = 1
+
+    for i in range(1, len(filtered)):
+        if (filtered[i] - filtered[i - 1]).days == 1:
+            current_streak += 1
+            max_streak = max(max_streak, current_streak)
+        else:
+            current_streak = 1
+
+    return max_streak
 
 
 @app.command()
@@ -121,7 +125,7 @@ def show(month: str = typer.Option(None, help="Month to show in YYYYMM format"))
         table.add_row(*row)
 
     console.print(table)
-    streak = current_streak(dates, year, month_num)
+    streak = longest_streak(dates, year, month_num)
     days_str = "day" if streak == 1 else "days"
     console.print(
         f"Longest streak this month: [bold green]{streak} {days_str}[/bold green]"
