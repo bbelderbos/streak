@@ -1,6 +1,7 @@
 import calendar
 from collections import Counter
 from datetime import datetime, timedelta
+import os
 from pathlib import Path
 
 from rich.console import Console
@@ -11,7 +12,8 @@ import typer
 app = typer.Typer()
 console = Console()
 
-LOG_FILE = Path.home() / ".streak_log.txt"
+DEFAULT_LOG_FILE = Path.home() / ".streak_log.txt"
+LOG_FILE = os.getenv("STREAK_LOG_FILE", DEFAULT_LOG_FILE)
 
 
 def load_timestamps() -> Counter:
@@ -121,7 +123,9 @@ def show(month: str = typer.Option(None, help="Month to show in YYYYMM format"))
     console.print(table)
     streak = current_streak(dates, year, month_num)
     days_str = "day" if streak == 1 else "days"
-    console.print(f"Current streak: [bold green]{streak} {days_str}[/bold green]")
+    console.print(
+        f"Longest streak this month: [bold green]{streak} {days_str}[/bold green]"
+    )
 
 
 if __name__ == "__main__":
