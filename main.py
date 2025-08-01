@@ -87,15 +87,15 @@ def show(month: str = typer.Option(None, help="Month to show in YYYYMM format"))
     dates = load_timestamps()
 
     now = datetime.today()
-    year, month_num = (now.year, now.month)
-    if month:
+    year, month_num = now.year, now.month
+    if month is not None:
         try:
             year, month_num = int(month[:4]), int(month[4:])
         except (ValueError, IndexError):
             console.print("❌ Invalid month format. Use YYYYMM.", style="bold red")
             raise typer.Exit()
         else:
-            if month_num < 1 or month_num > 12:
+            if month_num not in range(1, 13):
                 console.print("❌ Month must be between 01 and 12.", style="bold red")
                 raise typer.Exit()
 
