@@ -1,6 +1,6 @@
 import calendar
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, date
 import os
 from pathlib import Path
 
@@ -13,7 +13,7 @@ app = typer.Typer()
 console = Console()
 
 DEFAULT_LOG_FILE = Path.home() / ".streak_log.txt"
-LOG_FILE = os.getenv("STREAK_LOG_FILE", DEFAULT_LOG_FILE)
+LOG_FILE = Path(os.getenv("STREAK_LOG_FILE", DEFAULT_LOG_FILE))
 
 
 def load_timestamps() -> Counter:
@@ -21,13 +21,16 @@ def load_timestamps() -> Counter:
         return Counter()
     dates = Counter()
     with open(LOG_FILE) as f:
-        for line in f.readlines():
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
             d = datetime.fromisoformat(line.strip()).date()
             dates[d] += 1
     return dates
 
 
-def save_timestamp(date: datetime):
+def save_timestamp(date: datetime) -> None:
     with open(LOG_FILE, "a") as f:
         f.write(date.isoformat() + "\n")
 
@@ -48,7 +51,7 @@ def get_color_for_count(count: int) -> str:
             return "#005f00"
 
 
-def _filter_dates_for_month(dates: Counter, year: int, month: int) -> set:
+def _filter_dates_for_month(dates: Counter, year: int, month: int) -> set[date]:
     return {date for date in dates if date.year == year and date.month == month}
 
 
