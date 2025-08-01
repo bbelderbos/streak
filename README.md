@@ -21,8 +21,15 @@ Powered by [`typer`](https://typer.tiangolo.com/) and [`rich`](https://rich.read
 ```
 git clone git@github.com:bbelderbos/streak.git
 cd streak
+
 uv sync
-uv run main.py --help
+
+# export STREAK_LOG_FILE=...
+# defaults to ~/.streak_log.txt
+
+uv run main.py add        # logs today's activity
+uv run main.py show       # shows current month
+uv run main.py show --month 202508  # show any month (YYYYMM)
 ```
 
-
+Consistency is king! Keep your streak going! 💪 📈
