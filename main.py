@@ -25,7 +25,7 @@ def load_timestamps() -> Counter:
             line = line.strip()
             if not line:
                 continue
-            d = datetime.fromisoformat(line.strip()).date()
+            d = datetime.fromisoformat(line).date()
             dates[d] += 1
     return dates
 
