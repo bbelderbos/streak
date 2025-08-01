@@ -124,7 +124,13 @@ def show(month: str = typer.Option(None, help="Month to show in YYYYMM format"))
                     color = get_color_for_count(count)
                 else:
                     color = "#999999"
-                row.append(f"[on {color}] {day:^5} [/on {color}]")
+
+                day_str = f"[on {color}] {day:^5} [/on {color}]"
+                if date == now.date():
+                    day_str = f"[magenta bold]{day_str}[/magenta bold]"
+
+                row.append(day_str)
+
         table.add_row(*row)
 
     console.print(table)
